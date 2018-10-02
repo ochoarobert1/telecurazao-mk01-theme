@@ -1,4 +1,4 @@
-# telecurazao Wordpress Custom Theme #
+# TeleCuraçao (Mk.01) - Wordpress Custom Theme #
 
 * Version: 1.0.0
 * Design: [Robert Ochoa](http://www.robertochoa.com.ve/)

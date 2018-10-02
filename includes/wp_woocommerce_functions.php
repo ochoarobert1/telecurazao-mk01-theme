@@ -73,14 +73,14 @@ function wc_add_info_to_cart( $cart_data, $cart_item )
 
     if( isset( $cart_item["ads_duration"] ) ) {
         $custom_items[] = array(
-            'name' => __( 'Duration', 'telecuracao' ),
+            'name' => __( 'Duration', 'telecurazao' ),
             'value' => $cart_item["ads_duration"],
-            'display' => $cart_item["ads_duration"] . ' ' . __('Seconds', 'telecuracao')
+            'display' => $cart_item["ads_duration"] . ' ' . __('Seconds', 'telecurazao')
         );
     }
     if( isset( $cart_item["ads_start_date"] ) ) {
         $custom_items[] = array(
-            'name' => __( 'Start Date', 'telecuracao' ),
+            'name' => __( 'Start Date', 'telecurazao' ),
             'value' => $cart_item["ads_start_date"],
             'display' => $cart_item["ads_start_date"]
         );
@@ -146,26 +146,26 @@ function my_custom_checkout_field( $checkout ) {
 <div class="sales_agent_wrapper">
     <div class="sales_agent_item">
         <label for="sales_agent">
-            <?php _e('Sales Agent', 'telecuracao'); ?>
-            <?php _e('(Optional)', 'telecuracao'); ?></label>
+            <?php _e('Sales Agent', 'telecurazao'); ?>
+            <?php _e('(Optional)', 'telecurazao'); ?></label>
         <select name="sales_agent" id="sales_agent" class="form-control">
             <option value="House Account" selected>
-                <?php _e('House Account', 'telecuracao'); ?>
+                <?php _e('House Account', 'telecurazao'); ?>
             </option>
             <option value="Deyanira van der Linde">
-                <?php _e('Deyanira van der Linde', 'telecuracao'); ?>
+                <?php _e('Deyanira van der Linde', 'telecurazao'); ?>
             </option>
             <option value="Aimee St. Jago">
-                <?php _e('Aimee St. Jago', 'telecuracao'); ?>
+                <?php _e('Aimee St. Jago', 'telecurazao'); ?>
             </option>
             <option value="Sharleen Walle">
-                <?php _e('Sharleen Walle', 'telecuracao'); ?>
+                <?php _e('Sharleen Walle', 'telecurazao'); ?>
             </option>
             <option value="Carla Morales">
-                <?php _e('Carla Morales', 'telecuracao'); ?>
+                <?php _e('Carla Morales', 'telecurazao'); ?>
             </option>
             <option value="Freelance agent">
-                <?php _e('Freelance agent', 'telecuracao'); ?>
+                <?php _e('Freelance agent', 'telecurazao'); ?>
             </option>
         </select>
     </div>
