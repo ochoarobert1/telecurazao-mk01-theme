@@ -75,6 +75,52 @@ a {
     }
 }
 
+.header-mobile {
+
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem 1rem !important;
+    position: relative;
+    z-index: 10 !important;
+
+    & img {
+        max-height: 50px;
+    }
+
+    & .btn-menu {
+        background: none;
+        border: 0;
+        color: @white;
+        font-size: 1.5rem;
+    }
+
+    & .header-mobile-content {
+        position: absolute;
+        top: 66px;
+        left: 0;
+        background: @green;
+        color: @white;
+        z-index: 1;
+        width: 100%;
+        .transition(all .1s ease-in-out);
+
+        & ul {
+            list-style: none;
+            padding-left: 0;
+
+            & li {
+                & a {
+                    color: @white;
+                }
+            }
+        }
+    }
+}
+
+.header-mobile-content-hidden {
+    margin-top: -100%;
+}
+
 
 .menu-footer {
     & .nav {

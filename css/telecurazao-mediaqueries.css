@@ -5,6 +5,15 @@ MEDIAQUERIES LG/MD - LAYOUTS BIGGER THAN 992px
 /* --------------------------------------------------------------
 MEDIAQUERIES SM - LAYOUTS BIGGER THAN 768px
 -------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .navbar-custom .navbar-nav-custom li a {
+    padding: 0 15px;
+    font-size: .8rem;
+  }
+  .menu-footer .nav a {
+    padding: 10px;
+  }
+}
 /* --------------------------------------------------------------
 MEDIAQUERIES XS - LAYOUTS LESS THAN 768px
 -------------------------------------------------------------- */

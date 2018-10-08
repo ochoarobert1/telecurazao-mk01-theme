@@ -10,6 +10,11 @@ jQuery(document).ready(function ($) {
     });
 }); /* end of as page load scripts */
 
+jQuery('.btn-menu').on('click touchstart', function () {
+    "use strict";
+    jQuery('.header-mobile-content').toggleClass('header-mobile-content-hidden');
+});
+
 jQuery("input[name='advertisement_type']").change(function () {
     if (jQuery(this).val() == 'ads_upload') {
         jQuery('#checkout_url_file_wrapper').removeClass('checkout-hidden');

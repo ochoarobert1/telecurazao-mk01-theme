@@ -30,6 +30,10 @@ if ( $product->is_in_stock() ) : ?>
 <?php do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 
 <form class="cart" action="<?php echo esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ); ?>" method="post" enctype='multipart/form-data'>
+
+   <?php $product_info = get_post_meta(get_the_ID(), 'telecurazao_product_no_options', true); ?>
+
+   <?php if ($product_info != 'on') { ?>
     <div class="woocommerce-custom-single-input-wrapper">
         <label for="ads_duration">Commercial Duration: </label>
         <select name="ads_duration" id="ads_duration" class="form-control">
@@ -39,8 +43,9 @@ if ( $product->is_in_stock() ) : ?>
             <option value="100">1 Minute</option>
         </select>
     </div>
-    <?php $dt = new DateTime(); ?>
+    <?php } ?>
 
+    <?php $dt = new DateTime(); ?>
     <div class="woocommerce-custom-single-input-wrapper">
         <label for="ads_start_date">Commercial Start Date: </label>
         <div class="input-group date">

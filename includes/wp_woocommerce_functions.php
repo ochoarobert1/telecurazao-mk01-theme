@@ -37,6 +37,7 @@ remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_pr
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 
+/* ADD CLASSES FOR WOOCOMMERCE CHECKOUT FIELDS */
 add_filter('woocommerce_checkout_fields', 'addBootstrapToCheckoutFields' );
 function addBootstrapToCheckoutFields($fields) {
     foreach ($fields as &$fieldset) {
@@ -52,7 +53,7 @@ function addBootstrapToCheckoutFields($fields) {
 }
 
 
-/* ADD CUSTOM SELECTOR FOR COURSE / DISCIPLINES */
+/* ADD CUSTOM DATA TO ITEM CART */
 add_filter( 'woocommerce_add_cart_item_data', 'add_cart_item_custom_data_vase', 10, 2 );
 function add_cart_item_custom_data_vase( $cart_item_meta, $product_id ) {
     global $woocommerce;
@@ -61,12 +62,11 @@ function add_cart_item_custom_data_vase( $cart_item_meta, $product_id ) {
     return $cart_item_meta;
 }
 
+/* ADD CUSTOM DATA TO ITEM CART */
 add_filter( 'woocommerce_get_item_data', 'wc_add_info_to_cart', 10, 2 );
 function wc_add_info_to_cart( $cart_data, $cart_item )
 {
     $custom_items = array();
-
-
 
     if( !empty( $cart_data ) )
         $custom_items = $cart_data;
@@ -86,10 +86,10 @@ function wc_add_info_to_cart( $cart_data, $cart_item )
         );
     }
 
-
     return $custom_items;
 }
 
+/* CALCULATE PRICE BY CART ITEM */
 add_filter( 'woocommerce_before_calculate_totals', 'custom_cart_items_prices', 10, 1 );
 function custom_cart_items_prices( $cart ) {
 
@@ -103,19 +103,23 @@ function custom_cart_items_prices( $cart ) {
     foreach ( $cart->get_cart() as $cart_item ) {
         $price = $cart_item['data']->get_price();
         $quantity = $cart_item['quantity'];
-        switch ($cart_item['ads_duration']) {
-            case 15:
-                $duration = 0.5;
-                break;
-            case 30:
-                $duration = 1;
-                break;
-            case 45:
-                $duration = 1;
-                break;
-            case 100:
-                $duration = 1.5;
-                break;
+        if (isset($cart_item['ads_duration'])) {
+            switch ($cart_item['ads_duration']) {
+                case 15:
+                    $duration = 0.5;
+                    break;
+                case 30:
+                    $duration = 1;
+                    break;
+                case 45:
+                    $duration = 1.5;
+                    break;
+                case 100:
+                    $duration = 2;
+                    break;
+            }
+        } else {
+            $duration = 1;
         }
 
         // GET THE NEW PRICE (code to be replace by yours)
@@ -473,3 +477,5 @@ function woo_add_cart_fee( $cart ){
     }
 
 }
+
+
