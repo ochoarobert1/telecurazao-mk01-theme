@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
     "use strict";
     var date = new Date();
     date.setDate(date.getDate());
-    jQuery("body").niceScroll();
+//    jQuery("body").niceScroll();
     jQuery('#ads_start_date').datepicker({
         todayBtn: true,
         startView: 0,
@@ -31,7 +31,7 @@ jQuery("input[name='advertisement_type']").change(function () {
         jQuery('#checkout_url_file_wrapper').addClass('checkout-hidden');
         jQuery('body').trigger('update_checkout');
     }
-    jQuery("body").getNiceScroll().resize();
+//    jQuery("body").getNiceScroll().resize();
 });
 
 jQuery(document).on('click', '.checkout-support', function (e) {

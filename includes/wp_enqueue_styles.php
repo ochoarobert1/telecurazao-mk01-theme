@@ -77,11 +77,11 @@ function telecurazao_load_css() {
         wp_enqueue_style('bootstrap-datpicker-standalone');
 
         /*- MAIN STYLE -*/
-        wp_register_style('main-style', get_template_directory_uri() . '/css/telecurazao-style.css', false, $version_remove, 'all');
+        wp_register_style('main-style', get_template_directory_uri() . '/css/telecurazao-style.min.css', false, $version_remove, 'all');
         wp_enqueue_style('main-style');
 
         /*- MAIN MEDIAQUERIES -*/
-        wp_register_style('main-mediaqueries', get_template_directory_uri() . '/css/telecurazao-mediaqueries.css', array('main-style'), $version_remove, 'all');
+        wp_register_style('main-mediaqueries', get_template_directory_uri() . '/css/telecurazao-mediaqueries.min.css', array('main-style'), $version_remove, 'all');
         wp_enqueue_style('main-mediaqueries');
 
         /*- WORDPRESS STYLE -*/
