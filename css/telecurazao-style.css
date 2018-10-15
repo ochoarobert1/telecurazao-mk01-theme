@@ -411,3 +411,21 @@ a:hover {
   color: #ffffff;
   font-size: .8rem;
 }
+.input-group-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.input-group-checkbox label {
+  width: auto;
+  margin-bottom: 0;
+  margin-left: 10px;
+}
+.input-group-checkbox input {
+  width: auto;
+}
+.input-group-checkbox input:focus {
+  outline: 0;
+  border: 0;
+  box-shadow: none;
+}

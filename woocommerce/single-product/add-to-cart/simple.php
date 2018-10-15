@@ -31,16 +31,16 @@ if ( $product->is_in_stock() ) : ?>
 
 <form class="cart" action="<?php echo esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ); ?>" method="post" enctype='multipart/form-data'>
 
-   <?php $product_info = get_post_meta(get_the_ID(), 'telecurazao_product_no_options', true); ?>
+    <?php $product_info = get_post_meta(get_the_ID(), 'telecurazao_product_no_options', true); ?>
 
-   <?php if ($product_info != 'on') { ?>
+    <?php if ($product_info != 'on') { ?>
     <div class="woocommerce-custom-single-input-wrapper">
         <label for="ads_duration">Commercial Duration: </label>
         <select name="ads_duration" id="ads_duration" class="form-control">
             <option value="15">15 Seconds</option>
             <option value="30">30 Seconds</option>
             <option value="45">45 Seconds</option>
-            <option value="100">1 Minute</option>
+            <option value="60">1 Minute</option>
         </select>
     </div>
     <?php } ?>
@@ -52,6 +52,18 @@ if ( $product->is_in_stock() ) : ?>
             <input id="ads_start_date" type="text" name="ads_start_date" class="form-control"  value="<?php echo $dt->format('m/d/Y'); ?>">
         </div>
     </div>
+
+    <div class="woocommerce-custom-single-input-wrapper">
+        <label for="ads_start_date">Add Additional Services: </label>
+        <div class="input-group-checkbox">
+            <input id="ads_tcfm" type="checkbox" name="ads_tcfm" class="form-control"  value="1"><label for="ads_tcfm"> Add TCFM: $100</label>
+        </div>
+        <div class="input-group-checkbox">
+            <input id="ads_live_mentioning" type="checkbox" name="ads_live_mentioning" class="form-control"  value="1"> <label for="ads_live_mentioning">Add Live Mentioning: $150</label>
+        </div>
+    </div>
+
+
 
     <?php do_action( 'woocommerce_before_add_to_cart_button' ); ?>
 

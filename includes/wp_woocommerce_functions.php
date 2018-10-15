@@ -37,6 +37,17 @@ remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_pr
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 
+/* ADD PRICE IN FLORINS */
+add_action('woocommerce_custom_price', 'woocommerce_custom_price_converter');
+
+function woocommerce_custom_price_converter() {
+    global $product;
+    $tax_rate = 1.8;
+    $price_dollars = $product->get_price();
+    $price_florins = $price_dollars * $tax_rate;
+    echo ' | ƒ ' . number_format((float)$price_florins, 2, '.', '');
+}
+
 /* ADD CLASSES FOR WOOCOMMERCE CHECKOUT FIELDS */
 add_filter('woocommerce_checkout_fields', 'addBootstrapToCheckoutFields' );
 function addBootstrapToCheckoutFields($fields) {
@@ -59,6 +70,8 @@ function add_cart_item_custom_data_vase( $cart_item_meta, $product_id ) {
     global $woocommerce;
     $cart_item_meta['ads_duration'] = $_POST['ads_duration'];
     $cart_item_meta['ads_start_date'] = $_POST['ads_start_date'];
+    $cart_item_meta['ads_tcfm'] = $_POST['ads_tcfm'];
+    $cart_item_meta['ads_live_mentioning'] = $_POST['ads_live_mentioning'];
     return $cart_item_meta;
 }
 
@@ -83,6 +96,22 @@ function wc_add_info_to_cart( $cart_data, $cart_item )
             'name' => __( 'Start Date', 'telecurazao' ),
             'value' => $cart_item["ads_start_date"],
             'display' => $cart_item["ads_start_date"]
+        );
+    }
+
+    if( isset( $cart_item["ads_tcfm"] ) ) {
+        $custom_items[] = array(
+            'name' => __( '+ TCFM', 'telecurazao' ),
+            'value' => $cart_item["ads_tcfm"],
+            'display' => __( 'Requested', 'telecurazao' )
+        );
+    }
+
+    if( isset( $cart_item["ads_live_mentioning"] ) ) {
+        $custom_items[] = array(
+            'name' => __( '+ Live Mentioning', 'telecurazao' ),
+            'value' => $cart_item["ads_live_mentioning"],
+            'display' => __( 'Requested', 'telecurazao' )
         );
     }
 
@@ -114,7 +143,7 @@ function custom_cart_items_prices( $cart ) {
                 case 45:
                     $duration = 1.5;
                     break;
-                case 100:
+                case 60:
                     $duration = 2;
                     break;
             }
@@ -153,24 +182,17 @@ function my_custom_checkout_field( $checkout ) {
             <?php _e('Sales Agent', 'telecurazao'); ?>
             <?php _e('(Optional)', 'telecurazao'); ?></label>
         <select name="sales_agent" id="sales_agent" class="form-control">
-            <option value="House Account" selected>
-                <?php _e('House Account', 'telecurazao'); ?>
+            <?php $args = array('post_type' => 'sales-agents', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC' ); ?>
+            <?php $sales_agents = new WP_Query($args); $i = 1; ?>
+            <?php if ($sales_agents->have_posts()) : ?>
+            <?php while ($sales_agents->have_posts()) : $sales_agents->the_post(); ?>
+            <?php if ($i == 1) { $class = 'selected'; } else { $class = ''; } ?>
+            <option value="<?php echo get_the_ID(); ?>" <?php echo $class; ?>>
+                <?php the_title(); ?>
             </option>
-            <option value="Deyanira van der Linde">
-                <?php _e('Deyanira van der Linde', 'telecurazao'); ?>
-            </option>
-            <option value="Aimee St. Jago">
-                <?php _e('Aimee St. Jago', 'telecurazao'); ?>
-            </option>
-            <option value="Sharleen Walle">
-                <?php _e('Sharleen Walle', 'telecurazao'); ?>
-            </option>
-            <option value="Carla Morales">
-                <?php _e('Carla Morales', 'telecurazao'); ?>
-            </option>
-            <option value="Freelance agent">
-                <?php _e('Freelance agent', 'telecurazao'); ?>
-            </option>
+            <?php $i++; endwhile; ?>
+            <?php endif; ?>
+            <?php wp_reset_query(); ?>
         </select>
     </div>
 </div>
@@ -395,7 +417,8 @@ function my_custom_checkout_field_display_admin_order_meta($order){
     $tax_id_meta = get_post_meta( $order->id, 'tax_id', true );
     echo '<p class="order_note"><strong>'.__('Tax Id | KvK').':</strong> </p><p>' . $tax_id_meta . '</p>';
     $sales_agent_meta = get_post_meta( $order->id, 'sales_agent', true );
-    echo '<p class="order_note"><strong>'.__('Sales Agent').':</strong> </p><p>' . $sales_agent_meta . '</p>';
+    $sales_agent_post = get_post($sales_agent_meta);
+    echo '<p class="order_note"><strong>'.__('Sales Agent').':</strong> </p><p>' . $sales_agent_post->post_title . '</p>';
     $type_ads = get_post_meta( $order->id, 'advertisement_type', true );
     if ($type_ads == 'ads_upload') {
         echo '<div class="checkout_url_file_order_wrapper">';
@@ -438,7 +461,7 @@ function add_booking_order_line_item( $item, $cart_item_key, $values, $order ) {
         case 45:
             $duration = '45 Seconds';
             break;
-        case 100:
+        case 60:
             $duration = '1 Minute';
             break;
     }
@@ -450,6 +473,14 @@ function add_booking_order_line_item( $item, $cart_item_key, $values, $order ) {
     if( isset( $values['ads_start_date'] ) ){
         if( ! empty( $values['ads_start_date'] ) )
             $item->update_meta_data( 'Commercial Start Date', $values['ads_start_date'] );
+    }
+    if( isset( $values['ads_tcfm'] ) ){
+        if( ! empty( $values['ads_tcfm'] ) )
+            $item->update_meta_data( '+ TCFM', $values['ads_tcfm'] );
+    }
+    if( isset( $values['ads_live_mentioning'] ) ){
+        if( ! empty( $values['ads_live_mentioning'] ) )
+            $item->update_meta_data( '+ Live Mentioning', $values['ads_live_mentioning'] );
     }
 }
 
@@ -463,6 +494,18 @@ function woo_add_cart_fee( $cart ){
         parse_str( $_POST['post_data'], $post_data );
     } else {
         $post_data = $_POST; // fallback for final checkout (non-ajax)
+    }
+
+
+    foreach ( $cart->get_cart() as $cart_item ) {
+
+        if (isset($cart_item['ads_tcfm'])) {
+            WC()->cart->add_fee( '+ TCFM', 100 );
+        }
+        if (isset($cart_item['ads_live_mentioning'])) {
+            WC()->cart->add_fee( '+ Live Mentioning', 150 );
+        }
+
     }
 
     if (isset($post_data['advertisement_type'])) {

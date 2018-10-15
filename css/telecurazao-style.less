@@ -504,3 +504,24 @@ a {
         }
     }
 }
+
+
+.input-group-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    & label {
+        width: auto;
+        margin-bottom: 0;
+        margin-left: 10px;
+    }
+    & input {
+        width: auto;
+        &:focus {
+            outline: 0;
+            border: 0;
+            box-shadow: none;
+        }
+    }
+}
