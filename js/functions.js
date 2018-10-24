@@ -50,7 +50,7 @@ jQuery(document).on('click', '.checkout-support', function (e) {
     form_data.append('action', 'md_support_save');
 
     var ext = jQuery('#sortpicture').val().split('.').pop().toLowerCase();
-    if (jQuery.inArray(ext, ['mp4', 'avi', 'mkv', 'mpg', 'mov']) == -1) {
+    if (jQuery.inArray(ext, ['mp4', 'avi', 'mkv', 'mpg', 'mov', 'webm']) == -1) {
         jQuery('.checkout_url_file_handler_success').html('<i class="fa fa-times-circle error"></i> You have used an invalid file extension');
         return;
     }
@@ -150,7 +150,7 @@ jQuery(document).on('click', '.raw-support', function (e) {
     form_data.append('action', 'md_support_save');
 
     var ext = jQuery('#raw_sortpicture').val().split('.').pop().toLowerCase();
-    if (jQuery.inArray(ext, ['mp4', 'avi', 'mkv', 'mpg', 'mov']) == -1) {
+    if (jQuery.inArray(ext, ['mp4', 'avi', 'mkv', 'mpg', 'mov', 'webm']) == -1) {
         jQuery('.raw_url_file_handler_success').html('<i class="fa fa-times-circle error"></i> You have used an invalid file extension');
         return;
     }

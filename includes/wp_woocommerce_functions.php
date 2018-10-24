@@ -130,20 +130,21 @@ function custom_cart_items_prices( $cart ) {
 
     // Loop Through cart items
     foreach ( $cart->get_cart() as $cart_item ) {
+
         $price = $cart_item['data']->get_price();
         $quantity = $cart_item['quantity'];
         if (isset($cart_item['ads_duration'])) {
             switch ($cart_item['ads_duration']) {
-                case 15:
+                case '15':
                     $duration = 0.5;
                     break;
-                case 30:
+                case '30':
                     $duration = 1;
                     break;
-                case 45:
+                case '45':
                     $duration = 1.5;
                     break;
-                case 60:
+                case '60':
                     $duration = 2;
                     break;
             }
@@ -152,7 +153,7 @@ function custom_cart_items_prices( $cart ) {
         }
 
         // GET THE NEW PRICE (code to be replace by yours)
-        $new_price = ($price * $quantity) * $duration;
+        $new_price = $price * $duration;
 
         // Updated cart item price
         $cart_item['data']->set_price( $new_price );

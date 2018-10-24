@@ -38,7 +38,7 @@ if ( $product->is_in_stock() ) : ?>
         <label for="ads_duration">Commercial Duration: </label>
         <select name="ads_duration" id="ads_duration" class="form-control">
             <option value="15">15 Seconds</option>
-            <option value="30">30 Seconds</option>
+            <option value="30" selected>30 Seconds</option>
             <option value="45">45 Seconds</option>
             <option value="60">1 Minute</option>
         </select>
@@ -52,7 +52,7 @@ if ( $product->is_in_stock() ) : ?>
             <input id="ads_start_date" type="text" name="ads_start_date" class="form-control"  value="<?php echo $dt->format('m/d/Y'); ?>">
         </div>
     </div>
-
+    <?php /* ?>
     <div class="woocommerce-custom-single-input-wrapper">
         <label for="ads_start_date">Add Additional Services: </label>
         <div class="input-group-checkbox">
@@ -63,7 +63,7 @@ if ( $product->is_in_stock() ) : ?>
         </div>
     </div>
 
-
+<?php */ ?>
 
     <?php do_action( 'woocommerce_before_add_to_cart_button' ); ?>
 

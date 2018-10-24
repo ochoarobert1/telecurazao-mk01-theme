@@ -429,3 +429,18 @@ a:hover {
   border: 0;
   box-shadow: none;
 }
+.woocommerce .col2-set .col-1,
+.woocommerce-page .col2-set .col-1 {
+  -ms-flex: 0 0 48%;
+  flex: 0 0 48%;
+  max-width: 48%;
+}
+.woocommerce .col2-set .col-2,
+.woocommerce-page .col2-set .col-2 {
+  -ms-flex: 0 0 48%;
+  flex: 0 0 48%;
+  max-width: 48%;
+}
+.custom-product-item {
+  margin-bottom: 1.5rem;
+}

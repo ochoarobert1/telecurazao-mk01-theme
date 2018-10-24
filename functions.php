@@ -23,7 +23,7 @@ function my_jquery_enqueue() {
         /*- JQUERY ON WEB  -*/
         wp_register_script( 'jquery', 'https://code.jquery.com/jquery-3.3.1.min.js', false, '3.3.1', false);
         /*- JQUERY MIGRATE ON WEB  -*/
-        wp_register_script( 'jquery-migrate', 'http://code.jquery.com/jquery-migrate-3.0.1.min.js', array('jquery'), '3.0.1', true);
+        wp_register_script( 'jquery-migrate', 'https://code.jquery.com/jquery-migrate-3.0.1.min.js', array('jquery'), '3.0.1', true);
     }
     wp_enqueue_script('jquery');
     wp_enqueue_script('jquery-migrate');
@@ -169,6 +169,12 @@ if ( function_exists('add_image_size') ) {
 }
 
 /* --------------------------------------------------------------
+    ADD CUSTOM FUNCTIONS FOR CONSTRUCTOR
+-------------------------------------------------------------- */
+
+require_once('includes/wp_jscomposer_extended.php');
+
+/* --------------------------------------------------------------
     ADD CUSTOM AJAX HANDLER
 -------------------------------------------------------------- */
 
@@ -198,4 +204,158 @@ function md_support_save(){
         echo $movefile['error'];
     }
     die();
+}
+
+add_filter( 'manage_product_posts_columns', 'add_columns' );
+/**
+ * Add columns to management page
+ *
+ * @param array $columns
+ *
+ * @return array
+ */
+function add_columns( $columns )
+{
+    $columns['menu_order'] = 'Menu Order';
+    return $columns;
+}
+
+add_action( 'manage_product_posts_custom_column', 'columns_content', 10, 2 );
+
+/**
+ * Set content for columns in management page
+ *
+ * @param string $column_name
+ * @param int $post_id
+ *
+ * @return void
+ */
+function columns_content( $column_name, $post_id )
+{
+    if ( 'menu_order' != $column_name )
+    {
+        return;
+    }
+    $menu_order = get_post_meta( $post_id, 'menu_order', true );
+    echo $menu_order;
+}
+
+add_action( 'quick_edit_custom_box', 'quick_edit_add', 10, 2 );
+
+/**
+ * Add Headline news checkbox to quick edit screen
+ *
+ * @param string $column_name Custom column name, used to check
+ * @param string $post_type
+ *
+ * @return void
+ */
+function quick_edit_add( $column_name, $post_type )
+{
+    if ( 'menu_order' != $column_name )
+    {
+        return;
+    }
+
+    $data = get_post_meta( $post->ID, 'menu_order', true );
+    $data = empty( $data ) ? 0 : $data;
+
+    echo '<fieldset class="inline-edit-col-center inline-edit-categories"><div class="inline-edit-col"><label><span class="title">Menu Order</span><span class="input-text-wrap"><input type="number" name="menu_order" class="menu_order ptitle" value="'.$data.'"/></span></label></div></fieldset>';
+}
+
+
+
+
+
+add_action( 'save_post', 'save_quick_edit_data' );
+
+/**
+ * Save quick edit data
+ *
+ * @param int $post_id
+ *
+ * @return void|int
+ */
+function save_quick_edit_data( $post_id )
+{
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+    {
+        return $post_id;
+    }
+
+    if ( ! current_user_can( 'edit_post', $post_id ) || 'product' != $_POST['post_type'] )
+    {
+        return $post_id;
+    }
+
+    $data = empty( $_POST['menu_order'] ) ? 0 : $_POST['menu_order'];
+    update_post_meta( $post_id, 'menu_order', $data );
+}
+
+add_action( 'admin_footer', 'quick_edit_javascript' );
+
+/**
+ * Write javascript function to set checked to headline news checkbox
+ *
+ * @return void
+ */
+function quick_edit_javascript()
+{
+    global $current_screen;
+    if ( 'product' != $current_screen->post_type )
+    {
+        return;
+    }
+?>
+<script type="text/javascript">
+    function checked_headline_news(fieldValue) {
+        inlineEditPost.revert();
+        jQuery('.menu_order').val(fieldValue);
+    }
+
+</script>
+<?php
+}
+
+add_filter( 'post_row_actions', 'expand_quick_edit_link', 10, 2 );
+
+/**
+ * Pass headline news value to checked_headline_news javascript function
+ *
+ * @param array $actions
+ * @param array $post
+ *
+ * @return array
+ */
+function expand_quick_edit_link( $actions, $post )
+{
+    global $current_screen;
+
+    if ( 'product' != $current_screen->post_type )
+    {
+        return $actions;
+    }
+
+    $data                               = get_post_meta( $post->ID, 'menu_order', true );
+    $data                               = empty( $data ) ? 0 : $data;
+    $actions['inline hide-if-no-js']    = '<a href="#" class="editinline" title="';
+    $actions['inline hide-if-no-js']    .= esc_attr( 'Edit this item inline' ) . '"';
+    $actions['inline hide-if-no-js']    .= " onclick=\"checked_headline_news('{$data}')\" >";
+    $actions['inline hide-if-no-js']    .= 'Quick Edit';
+    $actions['inline hide-if-no-js']    .= '</a>';
+
+    return $actions;
+}
+
+add_filter('pre_get_posts', 'pre_get_posts_hook' );
+
+function pre_get_posts_hook($wp_query) {
+    if (!is_admin()) {
+        if ( is_archive('product') && $wp_query->is_main_query() ) { //edited this line
+            $wp_query->set( 'orderby', 'meta_value_num' );
+            $wp_query->set( 'meta_key', 'menu_order' );
+            $wp_query->set( 'order', 'ASC' );
+            return $wp_query;
+        }
+    }
 }
