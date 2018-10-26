@@ -23,4 +23,36 @@ function telecurazao_register_demo_metabox() {
         'id'         => $prefix . 'product_no_options',
         'type'       => 'checkbox'
     ) );
+
+    $cmb_metabox->add_field( array(
+        'name' => esc_html__( 'Product Custom Fees', 'telecurazao' ),
+        'desc' => esc_html__( 'Use this if you want to add several Product Custom Fees', 'telecurazao' ),
+        'type' => 'title',
+        'id'   => 'wiki_test_title'
+    ) );
+
+    $group_field_id = $cmb_metabox->add_field( [
+        'id'      => $prefix . 'custom_fees',
+        'type'    => 'group',
+        'options' => [ 'sortable' => false ]
+    ] );
+
+    $cmb_metabox->add_group_field( $group_field_id, [
+        'name' => esc_html__( 'Product Custom Fees', 'telecurazao' ),
+        'desc' => esc_html__( 'Use this if you want to add several Product Custom Fees', 'telecurazao' ),
+        'type' => 'title',
+        'id'   => 'wiki_test_title'
+    ] );
+
+    $cmb_metabox->add_group_field( $group_field_id, [
+        'name'         => 'Label of Fee',
+        'id'           => $prefix . 'fee_label',
+        'type'         => 'text'
+    ] );
+
+    $cmb_metabox->add_group_field( $group_field_id, [
+        'name'         => 'Price of Fee',
+        'id'           => $prefix . 'fee_price',
+        'type'         => 'text_money',
+    ] );
 }

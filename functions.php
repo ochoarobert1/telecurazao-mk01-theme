@@ -166,13 +166,16 @@ if ( function_exists('add_image_size') ) {
     add_image_size('avatar', 100, 100, true);
     add_image_size('blog_img', 276, 217, true);
     add_image_size('single_img', 636, 297, true );
+    add_image_size('catalog_img', 186, 248, true);
 }
 
 /* --------------------------------------------------------------
     ADD CUSTOM FUNCTIONS FOR CONSTRUCTOR
 -------------------------------------------------------------- */
 
-require_once('includes/wp_jscomposer_extended.php');
+if( class_exists( 'Vc_Manager' ) ) {
+    require_once('includes/wp_jscomposer_extended.php');
+}
 
 /* --------------------------------------------------------------
     ADD CUSTOM AJAX HANDLER

@@ -31,18 +31,19 @@ class VCExtendAddonClass {
             'base' => 'telecurazao_product_grid',
             'class' => '',
             'controls' => 'full',
-            'icon' => get_template_directory_uri() . '/images/logo.png',
+            'icon' => get_template_directory_uri() . '/images/logo-small.png',
             'category' => __('Content', 'js_composer'),
+
             //'admin_enqueue_js' => get_template_directory_uri() . '/js/wp_composer_extended.js',
             //'admin_enqueue_css' =>  get_template_directory_uri() . '/css/wp_composer_extended.css',
             'params' => array(
                 array(
                     'type' => 'textfield',
-                    'holder' => 'div',
                     'class' => '',
                     'heading' => __('Product Quantity', 'telecurazao'),
                     'param_name' => 'entry_quantity',
-                    'value' => '',
+                    'admin_label' => true,
+                    'value' => 0    ,
                     'description' => __('Insert quantity of products on the grid.', 'telecurazao')
                 )
             )
@@ -61,7 +62,7 @@ class VCExtendAddonClass {
         $i = 1;
         while ($products_array->have_posts()) : $products_array->the_post();
         $output .= '<div class="custom-product-item col">';
-        $output .= '<a href="'.get_permalink() .'" title="'. get_the_title() .'"><img src="'. get_the_post_thumbnail_url(get_the_ID(), 'medium').'" class="img-fluid"/></a>';
+        $output .= '<a href="'.get_permalink() .'" title="'. get_the_title() .'"><img src="'. get_the_post_thumbnail_url(get_the_ID(), 'catalog_img').'" class="img-fluid"/></a>';
         $output .= '</div>';
         $i++;
         if ($i > 5) {

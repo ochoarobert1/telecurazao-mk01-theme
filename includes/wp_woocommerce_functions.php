@@ -37,7 +37,11 @@ remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_pr
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15);
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
 
-/* ADD PRICE IN FLORINS */
+
+/* --------------------------------------------------------------
+ADD PRICE IN FLORINS
+-------------------------------------------------------------- */
+
 add_action('woocommerce_custom_price', 'woocommerce_custom_price_converter');
 
 function woocommerce_custom_price_converter() {
@@ -48,34 +52,87 @@ function woocommerce_custom_price_converter() {
     echo ' | ƒ ' . number_format((float)$price_florins, 2, '.', '');
 }
 
-/* ADD CLASSES FOR WOOCOMMERCE CHECKOUT FIELDS */
-add_filter('woocommerce_checkout_fields', 'addBootstrapToCheckoutFields' );
-function addBootstrapToCheckoutFields($fields) {
-    foreach ($fields as &$fieldset) {
-        foreach ($fieldset as &$field) {
-            // if you want to add the form-group class around the label and the input
-            $field['class'][] = 'form-group';
+/* --------------------------------------------------------------
+ADD CUSTOM FIELD TO PRODUCT SINGLE - DYNAMIC CONTENT
+-------------------------------------------------------------- */
 
-            // add form-control to the actual input
-            $field['input_class'][] = 'form-control';
+add_action('woocommerce_before_add_to_cart_button', 'custom_woocommerce_fee_fields');
+
+function custom_woocommerce_fee_fields() {
+    $product_info = get_post_meta( get_the_ID(), 'telecurazao_product_no_options', true );
+    $product_fees = (array) get_post_meta( get_the_ID(), 'telecurazao_custom_fees', true );
+    foreach ($product_fees as $key => $value) {
+        if (empty($value)) {
+            unset($product_fees[$key]);
         }
     }
-    return $fields;
+
+    /* CUSTOM PRODUCT DURATION */
+    if ($product_info != 'on') { ?>
+<div class="woocommerce-custom-single-input-wrapper">
+    <label for="ads_duration">Commercial Duration: </label>
+    <select name="ads_duration" id="ads_duration" class="form-control">
+        <option value="15">15 Seconds</option>
+        <option value="30" selected>30 Seconds</option>
+        <option value="45">45 Seconds</option>
+        <option value="60">1 Minute</option>
+    </select>
+</div>
+<?php }
+
+    /* CUSTOM PRODUCT START DATE */
+    $dt = new DateTime(); ?>
+<div class="woocommerce-custom-single-input-wrapper">
+    <label for="ads_start_date">Commercial Start Date: </label>
+    <div class="input-group date">
+        <input id="ads_start_date" type="text" name="ads_start_date" class="form-control" value="<?php echo $dt->format('m/d/Y'); ?>">
+    </div>
+</div>
+<?php /* CUSTOM FEE FIELDS */ ?>
+<?php if (!empty($product_fees)) { ?>
+<div class="woocommerce-custom-single-input-wrapper">
+    <label>Add Additional Services: </label>
+
+    <?php $i = 0; foreach ($product_fees as $product_fees_item) { ?>
+    <div class="input-group-checkbox">
+        <input id="fee_item_<?php echo $i; ?>" type="checkbox" name="fee_item_<?php echo $i; ?>" class="form-control" value="1"><label for="fee_item_<?php echo $i; ?>">
+            <?php echo $product_fees_item['telecurazao_fee_label'] . ' - $ ' . $product_fees_item['telecurazao_fee_price'] ?></label>
+    </div>
+    <?php $i++; } ?>
+</div>
+<?php }
 }
 
+/* --------------------------------------------------------------
+ADD CUSTOM DATA TO ITEM CART
+-------------------------------------------------------------- */
 
-/* ADD CUSTOM DATA TO ITEM CART */
 add_filter( 'woocommerce_add_cart_item_data', 'add_cart_item_custom_data_vase', 10, 2 );
 function add_cart_item_custom_data_vase( $cart_item_meta, $product_id ) {
     global $woocommerce;
     $cart_item_meta['ads_duration'] = $_POST['ads_duration'];
     $cart_item_meta['ads_start_date'] = $_POST['ads_start_date'];
-    $cart_item_meta['ads_tcfm'] = $_POST['ads_tcfm'];
-    $cart_item_meta['ads_live_mentioning'] = $_POST['ads_live_mentioning'];
+    $product_fees = (array) get_post_meta( $product_id, 'telecurazao_custom_fees', true );
+    foreach ($product_fees as $key => $value) {
+        if (empty($value)) {
+            unset($product_fees[$key]);
+        }
+    }
+
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'fee_item_') !== false) {
+            $fee_id = substr($key, -1);
+            $cart_item_meta['fee_item_' . $fee_id] = $product_fees[$fee_id];
+        }
+
+    }
     return $cart_item_meta;
 }
 
-/* ADD CUSTOM DATA TO ITEM CART */
+/* --------------------------------------------------------------
+ADD CUSTOM DATA TO ITEM CART
+-------------------------------------------------------------- */
+
 add_filter( 'woocommerce_get_item_data', 'wc_add_info_to_cart', 10, 2 );
 function wc_add_info_to_cart( $cart_data, $cart_item )
 {
@@ -99,26 +156,25 @@ function wc_add_info_to_cart( $cart_data, $cart_item )
         );
     }
 
-    if( isset( $cart_item["ads_tcfm"] ) ) {
-        $custom_items[] = array(
-            'name' => __( '+ TCFM', 'telecurazao' ),
-            'value' => $cart_item["ads_tcfm"],
-            'display' => __( 'Requested', 'telecurazao' )
-        );
+    foreach ($cart_item as $key => $value) {
+        if (strpos($key, 'fee_item_') !== false) {
+            $fee_id = substr($key, -1);
+            if( isset( $cart_item["fee_item_" . $fee_id] ) ) {
+                $custom_items[] = array(
+                    'name' => '+ ' . $cart_item["fee_item_" . $fee_id]["telecurazao_fee_label"],
+                    'value' => floatval($cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]),
+                    'display' => '$ ' . $cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]
+                );
+            }
+        }
     }
-
-    if( isset( $cart_item["ads_live_mentioning"] ) ) {
-        $custom_items[] = array(
-            'name' => __( '+ Live Mentioning', 'telecurazao' ),
-            'value' => $cart_item["ads_live_mentioning"],
-            'display' => __( 'Requested', 'telecurazao' )
-        );
-    }
-
     return $custom_items;
 }
 
-/* CALCULATE PRICE BY CART ITEM */
+/* --------------------------------------------------------------
+CALCULATE PRICE BY CART ITEM
+-------------------------------------------------------------- */
+
 add_filter( 'woocommerce_before_calculate_totals', 'custom_cart_items_prices', 10, 1 );
 function custom_cart_items_prices( $cart ) {
 
@@ -129,6 +185,7 @@ function custom_cart_items_prices( $cart ) {
         return;
 
     // Loop Through cart items
+    $acc_fees = 0;
     foreach ( $cart->get_cart() as $cart_item ) {
 
         $price = $cart_item['data']->get_price();
@@ -152,18 +209,46 @@ function custom_cart_items_prices( $cart ) {
             $duration = 1;
         }
 
+        foreach ($cart_item as $key => $value) {
+            if (strpos($key, 'fee_item_') !== false) {
+                $fee_id = substr($key, -1);
+                if( isset( $cart_item["fee_item_" . $fee_id] ) ) {
+                    $acc_fees = floatval($cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]);
+                }
+            }
+        }
+
         // GET THE NEW PRICE (code to be replace by yours)
-        $new_price = $price * $duration;
+        $new_price = ($price * $duration) + $acc_fees;
 
         // Updated cart item price
         $cart_item['data']->set_price( $new_price );
     }
 }
 
+/* --------------------------------------------------------------
+ADD CLASSES FOR WOOCOMMERCE CHECKOUT FIELDS
+-------------------------------------------------------------- */
 
-/**
- * Add the field to the checkout
- */
+add_filter('woocommerce_checkout_fields', 'addBootstrapToCheckoutFields' );
+function addBootstrapToCheckoutFields($fields) {
+    foreach ($fields as &$fieldset) {
+        foreach ($fieldset as &$field) {
+            // if you want to add the form-group class around the label and the input
+            $field['class'][] = 'form-group';
+
+            // add form-control to the actual input
+            $field['input_class'][] = 'form-control';
+        }
+    }
+    return $fields;
+}
+
+/* --------------------------------------------------------------
+ADD CUSTOM FIELDS FOR CHECKOUT
+-------------------------------------------------------------- */
+
+/** Add the field to the checkout **/
 add_action( 'woocommerce_after_order_notes', 'my_custom_checkout_field' );
 
 function my_custom_checkout_field( $checkout ) {
@@ -370,9 +455,10 @@ function my_custom_checkout_field( $checkout ) {
 }
 
 
-/**
- * Update the order meta with field value
- */
+/* --------------------------------------------------------------
+Update the order meta with field value
+-------------------------------------------------------------- */
+
 add_action( 'woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta' );
 
 function my_custom_checkout_field_update_order_meta( $order_id ) {
@@ -408,9 +494,10 @@ function my_custom_checkout_field_update_order_meta( $order_id ) {
     }
 }
 
-/**
- * Display field value on the order edit page
- */
+/* --------------------------------------------------------------
+Display field value on the order edit page
+-------------------------------------------------------------- */
+
 add_action( 'woocommerce_admin_order_data_after_shipping_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
 
 function my_custom_checkout_field_display_admin_order_meta($order){
@@ -450,9 +537,13 @@ function my_custom_checkout_field_display_admin_order_meta($order){
     }
 }
 
+/* --------------------------------------------------------------
+update item cart key values
+-------------------------------------------------------------- */
+
 add_action( 'woocommerce_checkout_create_order_line_item', 'add_booking_order_line_item', 20, 4 );
 function add_booking_order_line_item( $item, $cart_item_key, $values, $order ) {
-    switch ($cart_item['ads_duration']) {
+    switch ($values['ads_duration']) {
         case 15:
             $duration = '15 Seconds';
             break;
@@ -475,15 +566,20 @@ function add_booking_order_line_item( $item, $cart_item_key, $values, $order ) {
         if( ! empty( $values['ads_start_date'] ) )
             $item->update_meta_data( 'Commercial Start Date', $values['ads_start_date'] );
     }
-    if( isset( $values['ads_tcfm'] ) ){
-        if( ! empty( $values['ads_tcfm'] ) )
-            $item->update_meta_data( '+ TCFM', $values['ads_tcfm'] );
-    }
-    if( isset( $values['ads_live_mentioning'] ) ){
-        if( ! empty( $values['ads_live_mentioning'] ) )
-            $item->update_meta_data( '+ Live Mentioning', $values['ads_live_mentioning'] );
+    foreach ($values as $key => $value) {
+        if (strpos($key, 'fee_item_') !== false) {
+            $fee_id = substr($key, -1);
+            if( isset( $values["fee_item_" . $fee_id] ) ) {
+                if( ! empty( $values["fee_item_" . $fee_id] ) )
+                    $item->update_meta_data( $values["fee_item_" . $fee_id]["telecurazao_fee_label"], $values["fee_item_" . $fee_id]["telecurazao_fee_price"] );
+            }
+        }
     }
 }
+
+/* --------------------------------------------------------------
+ADD CUSTOM FEES
+-------------------------------------------------------------- */
 
 add_action( 'woocommerce_cart_calculate_fees', 'woo_add_cart_fee' );
 function woo_add_cart_fee( $cart ){
@@ -494,32 +590,19 @@ function woo_add_cart_fee( $cart ){
     if ( isset( $_POST['post_data'] ) ) {
         parse_str( $_POST['post_data'], $post_data );
     } else {
-        $post_data = $_POST; // fallback for final checkout (non-ajax)
-    }
-
-
-    foreach ( $cart->get_cart() as $cart_item ) {
-
-        if (isset($cart_item['ads_tcfm'])) {
-            WC()->cart->add_fee( '+ TCFM', 100 );
-        }
-        if (isset($cart_item['ads_live_mentioning'])) {
-            WC()->cart->add_fee( '+ Live Mentioning', 150 );
-        }
-
+        $post_data = $_POST;
     }
 
     if (isset($post_data['advertisement_type'])) {
 
         if ($post_data['advertisement_type'] == 'ads_production'){
-            $extracost = 250; // not sure why you used intval($_POST['state']) ?
+            $extracost = 250;
             WC()->cart->add_fee( 'Request commercial Production Fee:', $extracost );
         } else {
-            $extracost = 0; // not sure why you used intval($_POST['state']) ?
+            $extracost = 0;
             WC()->cart->add_fee( 'Request commercial Production Fee:', $extracost );
         }
+
     }
 
 }
-
-
