@@ -96,7 +96,7 @@ function custom_woocommerce_fee_fields() {
     <?php $i = 0; foreach ($product_fees as $product_fees_item) { ?>
     <div class="input-group-checkbox">
         <input id="fee_item_<?php echo $i; ?>" type="checkbox" name="fee_item_<?php echo $i; ?>" class="form-control" value="1"><label for="fee_item_<?php echo $i; ?>">
-            <?php echo $product_fees_item['telecurazao_fee_label'] . ' - $ ' . $product_fees_item['telecurazao_fee_price'] ?></label>
+        <?php echo $product_fees_item['telecurazao_fee_label'] . ' - $ ' . $product_fees_item['telecurazao_fee_price'] ?></label>
     </div>
     <?php $i++; } ?>
 </div>
@@ -606,3 +606,88 @@ function woo_add_cart_fee( $cart ){
     }
 
 }
+
+
+/* --------------------------------------------------------------
+ADD CUSTOM EXTRA FIELDS
+-------------------------------------------------------------- */
+function wooc_extra_register_fields() {?>
+<p class="form-row form-row-first">
+    <label for="reg_billing_first_name"><?php _e( 'First name', 'woocommerce' ); ?><span class="required">*</span></label>
+    <input type="text" class="input-text" name="billing_first_name" id="reg_billing_first_name" value="<?php if ( ! empty( $_POST['billing_first_name'] ) ) esc_attr_e( $_POST['billing_first_name'] ); ?>" />
+</p>
+<p class="form-row form-row-last">
+    <label for="reg_billing_last_name"><?php _e( 'Last name', 'woocommerce' ); ?><span class="required">*</span></label>
+    <input type="text" class="input-text" name="billing_last_name" id="reg_billing_last_name" value="<?php if ( ! empty( $_POST['billing_last_name'] ) ) esc_attr_e( $_POST['billing_last_name'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-wide">
+    <label for="reg_billing_phone"><?php _e( 'Phone', 'woocommerce' ); ?></label>
+    <input type="text" class="input-text" name="billing_phone" id="reg_billing_phone" value="<?php if ( ! empty( $_POST['billing_phone'] ) ) esc_attr_e( $_POST['billing_phone'] ); ?>" />
+</p>
+<p class="form-row form-row-wide">
+    <label for="reg_billing_company"><?php _e( 'Business', 'woocommerce' ); ?></label>
+    <input type="text" class="input-text" name="billing_company" id="reg_billing_company" value="<?php if ( ! empty( $_POST['billing_company'] ) ) esc_attr_e( $_POST['billing_company'] ); ?>" />
+</p>
+
+<?php
+                                      }
+add_action( 'woocommerce_register_form_start', 'wooc_extra_register_fields' );
+
+function wooc_validate_extra_register_fields( $username, $email, $validation_errors ) {
+    if ( isset( $_POST['billing_first_name'] ) && empty( $_POST['billing_first_name'] ) ) {
+        $validation_errors->add( 'billing_first_name_error', __( '<strong>Error</strong>: First name is required!', 'woocommerce' ) );
+    }
+    if ( isset( $_POST['billing_last_name'] ) && empty( $_POST['billing_last_name'] ) ) {
+        $validation_errors->add( 'billing_last_name_error', __( '<strong>Error</strong>: Last name is required!.', 'woocommerce' ) );
+    }
+    return $validation_errors;
+}
+add_action( 'woocommerce_register_post', 'wooc_validate_extra_register_fields', 10, 3 );
+
+function wooc_save_extra_register_fields( $customer_id ) {
+    if ( isset( $_POST['billing_phone'] ) ) {
+        // Phone input filed which is used in WooCommerce
+        update_user_meta( $customer_id, 'billing_phone', sanitize_text_field( $_POST['billing_phone'] ) );
+    }
+    if ( isset( $_POST['billing_company'] ) ) {
+        // Phone input filed which is used in WooCommerce
+        update_user_meta( $customer_id, 'billing_company', sanitize_text_field( $_POST['billing_company'] ) );
+    }
+    if ( isset( $_POST['billing_first_name'] ) ) {
+        //First name field which is by default
+        update_user_meta( $customer_id, 'first_name', sanitize_text_field( $_POST['billing_first_name'] ) );
+        // First name field which is used in WooCommerce
+        update_user_meta( $customer_id, 'billing_first_name', sanitize_text_field( $_POST['billing_first_name'] ) );
+    }
+    if ( isset( $_POST['billing_last_name'] ) ) {
+        // Last name field which is by default
+        update_user_meta( $customer_id, 'last_name', sanitize_text_field( $_POST['billing_last_name'] ) );
+        // Last name field which is used in WooCommerce
+        update_user_meta( $customer_id, 'billing_last_name', sanitize_text_field( $_POST['billing_last_name'] ) );
+    }
+}
+add_action( 'woocommerce_created_customer', 'wooc_save_extra_register_fields' );
+
+function new_contact_methods( $contactmethods ) {
+    $contactmethods['billing_company'] = 'Billing Company';
+    return $contactmethods;
+}
+add_filter( 'user_contactmethods', 'new_contact_methods', 10, 1 );
+
+
+function new_modify_user_table( $column ) {
+    $column['billing_company'] = 'Company';
+    return $column;
+}
+add_filter( 'manage_users_columns', 'new_modify_user_table' );
+
+function new_modify_user_table_row( $val, $column_name, $user_id ) {
+    switch ($column_name) {
+        case 'billing_company' :
+            return get_the_author_meta( 'billing_company', $user_id );
+        default:
+    }
+    return $val;
+}
+add_filter( 'manage_users_custom_column', 'new_modify_user_table_row', 10, 3 );

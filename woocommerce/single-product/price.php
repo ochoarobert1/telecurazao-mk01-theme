@@ -24,6 +24,8 @@ global $product;
 
 ?>
 <p class="price">
-<?php echo $product->get_price_html(); ?>
-<?php do_action('woocommerce_custom_price'); ?>
+    
+    <?php echo $product->get_price_html(); ?>
+    <?php do_action('woocommerce_custom_price'); ?>
+    
 </p>

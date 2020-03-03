@@ -42,6 +42,12 @@ function telecurazao__register_required_plugins() {
             'slug'      => 'wordpress-importer',
             'required'  => true,
         ),
+        
+        array(
+            'name'      => 'Woocommerce',
+            'slug'      => 'woocommerce',
+            'required'  => true,
+        ),
 
         array(
             'name'      => 'Jetpack for WordPress',

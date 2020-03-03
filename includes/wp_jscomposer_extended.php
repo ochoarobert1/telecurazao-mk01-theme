@@ -24,6 +24,12 @@ class VCExtendAddonClass {
             return;
         }
 
+        $categories_array = array();
+        $categories = get_categories(array('taxonomy' => 'product_cat',));
+        foreach( $categories as $category ) {
+            $categories_array[$category->name] = $category->term_id;
+        }
+
         /* WPBakery Logic Script */
         vc_map( array(
             'name' => __('Telecuracao Custom Product Grid', 'telecurazao'),
@@ -45,6 +51,15 @@ class VCExtendAddonClass {
                     'admin_label' => true,
                     'value' => 0    ,
                     'description' => __('Insert quantity of products on the grid.', 'telecurazao')
+                ),
+                array(
+                    'type'        => 'checkbox',
+                    'heading'     => __('Category / Categories', 'usaveganmag'),
+                    'description' => __('Select Category which this section will be configured', 'telecurazao'),
+                    'param_name'  => 'category_selection',
+                    'admin_label' => true,
+                    'value'       => $categories_array,
+                    'std'         => ' ',
                 )
             )
         ) );
@@ -52,28 +67,34 @@ class VCExtendAddonClass {
 
     /* Shortcode logic how it should be rendered */
     public function render_telecurazao_product_grid( $atts, $content = null ) {
-        extract( shortcode_atts( array( 'entry_quantity' => 'entry_quantity' ), $atts ) );
-        if ($entry_quantity == '') { $entry_quantity == -1; }
-        $output .= '<div class="container"><div class="row"><div class="custom-product-grid-container col-12">';
-        $product_args = array('post_type' => 'product', 'posts_per_page' => $entry_quantity, 'order' => 'ASC', 'orderby' => 'meta_value_num', 'meta_key' => 'menu_order');
-        $products_array = new WP_Query($product_args);
-        if ($products_array->have_posts()) :
-        $output .= '<div class="row align-items-center justify-content-center">';
-        $i = 1;
-        while ($products_array->have_posts()) : $products_array->the_post();
-        $output .= '<div class="custom-product-item col">';
-        $output .= '<a href="'.get_permalink() .'" title="'. get_the_title() .'"><img src="'. get_the_post_thumbnail_url(get_the_ID(), 'catalog_img').'" class="img-fluid"/></a>';
-        $output .= '</div>';
-        $i++;
-        if ($i > 5) {
-            $output .= '<div class="w-100"></div>';
+        $output = '';
+
+            extract( shortcode_atts( array( 'entry_quantity' => 'entry_quantity', 'category_selection' => 'category_selection' ), $atts ) );
+            if ($entry_quantity == '') { $entry_quantity == -1; }
+            $output .= '<div class="container"><div class="row"><div class="custom-product-grid-container col-12">';
+            if ($category_selection == '') {
+                $product_args = array('post_type' => 'product', 'posts_per_page' => $entry_quantity, 'order' => 'ASC', 'orderby' => 'meta_value_num', 'meta_key' => 'menu_order');
+            } else {
+                $product_args = array('post_type' => 'product', 'posts_per_page' => $entry_quantity, 'order' => 'ASC', 'orderby' => 'meta_value_num', 'meta_key' => 'menu_order', 'tax_query' => array( array( 'taxonomy' => 'product_cat', 'field'    => 'id', 'terms'    => $category_selection, ), ),);
+            }
+            $products_array = new WP_Query($product_args);
+            if ($products_array->have_posts()) :
+            $output .= '<div class="row align-items-center justify-content-center">';
             $i = 1;
-        }
-        endwhile;
-        $output .= '</div>';
-        endif;
-        wp_reset_query();
-        $output .= '</div></div></div>';
+            while ($products_array->have_posts()) : $products_array->the_post();
+            $output .= '<div class="custom-product-item col">';
+            $output .= '<a href="'.get_permalink() .'" title="'. get_the_title() .'"><img src="'. get_the_post_thumbnail_url(get_the_ID(), 'catalog_img').'" class="img-fluid"/></a>';
+            $output .= '</div>';
+            $i++;
+            if ($i > 5) {
+                $output .= '<div class="w-100"></div>';
+                $i = 1;
+            }
+            endwhile;
+            $output .= '</div>';
+            endif;
+            wp_reset_query();
+            $output .= '</div></div></div>';
 
         return $output;
     }

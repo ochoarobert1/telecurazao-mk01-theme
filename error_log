@@ -1,0 +1,56 @@
+[29-Jan-2019 12:40:55 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[29-Jan-2019 12:41:05 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[30-Jan-2019 13:47:48 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[30-Jan-2019 13:48:02 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:22:34 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:22:34 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:22:41 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:22:41 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:33:17 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:33:17 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:33:24 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[19-Sep-2019 11:33:24 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[20-Nov-2019 14:17:47 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1
+[01-Feb-2020 23:47:17 America/New_York] PHP Fatal error:  Uncaught Error: Call to undefined function get_header() in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php:1
+Stack trace:
+#0 {main}
+  thrown in /home/telettiy/public_html/wp-content/themes/telecurazao-mk01-theme/index.php on line 1

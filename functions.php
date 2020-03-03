@@ -153,7 +153,7 @@ require_once('includes/wp_custom_post_type.php');
     ADD CUSTOM THEME CONTROLS
 -------------------------------------------------------------- */
 
-//require_once('includes/wp_custom_theme_control.php');
+require_once('includes/wp_custom_theme_control.php');
 
 /* --------------------------------------------------------------
     ADD CUSTOM IMAGE SIZE
@@ -362,3 +362,11 @@ function pre_get_posts_hook($wp_query) {
         }
     }
 }
+
+
+function add_footer_script () {
+    $options = get_theme_mod('telecuracao_custom_script');
+    echo $options['adsense'];
+}
+
+add_action('wp_footer', 'add_footer_script');
