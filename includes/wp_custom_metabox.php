@@ -56,3 +56,22 @@ function telecurazao_register_demo_metabox() {
         'type'         => 'text_money',
     ] );
 }
+
+/**
+ * Register meta box(es).
+ */
+function wpdocs_register_meta_boxes() {
+    add_meta_box( 'jsontelemetabox', __( 'Generate JSON file', 'telecuracao' ), 'wpdocs_my_display_callback', 'shop_order', 'side' );
+}
+add_action( 'add_meta_boxes', 'wpdocs_register_meta_boxes' );
+
+function wpdocs_my_display_callback( $post ) {
+?>
+<div>
+    <h4>Generate file for external custom service</h4>
+    <button data-order_id="<?php echo get_the_ID(); ?>" class="button btn-json-file">Generate JSON File</button>
+    <div class="response-json-file"></div>
+    <a href="" class="hidden-click hidden"></a>
+</div>
+<?php 
+                                             }

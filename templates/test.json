@@ -1,0 +1,36 @@
+[
+    {
+        'COD_CIA': '1',
+        'PRODUCTO': 'TELETON 2019',
+        'FECHA_INSERCION': '2019/12/19',
+        'NO_PAUTA': '307429',
+        'BRUTO': '12454.20',
+        'DESCUENTO_MONTO': '622.71',
+        'SUBTOTAL': '11831.49',
+        'ITBMS': '828.2',
+        'TOTAL': '12659.69',
+        'RUC_CLIENTE': '443-233-12585',
+        'NOMBRE_CLIENTE': 'CLUB ACTIVO 20-30 DE PANAMA',
+        'TOT_PAUTAS': '9',
+        'detalle': [
+            {
+                'TIPO': 'P',
+                'COD_PROGRAMA': '55',
+                'COD_PAQUETE': null,
+                'VERSION_PAQUETE': null,
+                'COD_PROD_C': 'CUNASS',
+                'COD_CUNA': '00033',
+                'DESCRIPCION_CUNA': 'TELETON',
+                'DURACION': '30',
+                'FECHA_REAL': '2019/12/19',
+                'CANTIDAD': '9',
+                'MONTOTARIFA': '815.4',
+                'DESCUENTO_MONTO': '40.77',
+                'RENGLON': '1',
+                'USUARIO_APROBACION': 'ROSA PEREZ',
+                'USUARIO_CORREO': ' ROPEREZ@AGENCIA.com.pa',
+                'COMENTARIOS': null
+            }
+        ]
+    }
+]

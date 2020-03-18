@@ -370,3 +370,94 @@ function add_footer_script () {
 }
 
 add_action('wp_footer', 'add_footer_script');
+
+add_action('admin_enqueue_scripts', 'telecuracao_shop_order_scripts', 99);
+
+function telecuracao_shop_order_scripts() {
+    $version_remove = NULL;
+    global $post_type;
+    if( 'shop_order' == $post_type ) {
+        wp_register_script('admin-functions', get_template_directory_uri() . '/js/admin-functions.js', array('jquery'), $version_remove, true);
+        wp_enqueue_script('admin-functions');
+
+        wp_localize_script('admin-functions', 'custom_admin_url', array(
+            'custom_ajax_url' => admin_url('admin-ajax.php')
+        ));
+    }
+}
+
+add_action('wp_ajax_ajax_generate_json_file', 'ajax_generate_json_file_handler');
+
+function ajax_generate_json_file_handler() {
+    $order_id = $_POST['order_id'];
+    $order = wc_get_order( $order_id );
+
+    $order_data = $order->get_data(); // The Order data
+
+    $order_date_created = $order_data['date_created']->date('Y-m-d H:i:s');
+    $order_discount_total = $order_data['discount_total'];
+    $order_total = $order_data['cart_tax'];
+    $order_total_tax = $order_data['total_tax'];
+    $order_billing_first_name = $order_data['billing']['first_name'];
+    $order_billing_last_name = $order_data['billing']['last_name'];
+    $order_billing_email = $order_data['billing']['email'];
+    $tax_id = get_post_meta($order_id, 'tax_id', true);
+
+
+    foreach ($order->get_items() as $item_key => $item ):
+
+    $item_id = $item->get_id();
+
+    $item_data    = $item->get_data();
+
+//    var_dump($item_data);
+
+    $product_name = $item_data['name'];
+    $product_id   = $item_data['product_id'];
+    $quantity     = $item_data['quantity'];
+    $line_total        = $item_data['total'];
+
+    $product        = $item->get_product(); // Get the WC_Product object
+    $product_sku    = $product->get_sku();
+
+    endforeach;
+
+    $json_generate = array(
+        'COD_CIA' => 1,
+        'PRODUCTO' => $product_name,
+        'FECHA_INSERCION' => $order_date_created,
+        'NO_PAUTA' => '0',
+        'BRUTO' => $line_total,
+        'DESCUENTO_MONTO' => $order_discount_total,
+        'SUBTOTAL' => $order_total,
+        'ITBMS' => '0',
+        'TOTAL' => $order_total_tax,
+        'RUC_CLIENTE' => $tax_id,
+        'NOMBRE_CLIENTE' => $order_billing_first_name . ' ' . $order_billing_last_name,
+        'TOT_PAUTAS' => $quantity,
+        'detalle' => array(
+            'TIPO' => 'P',
+            'COD_PROGRAMA' => $product_id,
+            'COD_PAQUETE' => null,
+            'VERSION_PAQUETE' => null,
+            'COD_PROD_C' => $product_name,
+            'COD_CUNA' => $product_id,
+            'DESCRIPCION_CUNA' => $product_name,
+            'DURACION' => '30',
+            'FECHA_REAL' => '2019/12/19',
+            'CANTIDAD' => $quantity,
+            'MONTOTARIFA' => $line_total,
+            'DESCUENTO_MONTO' => '0',
+            'RENGLON' => '1',
+            'USUARIO_APROBACION' => $order_billing_first_name . ' ' . $order_billing_last_name,
+            'USUARIO_CORREO' => $order_billing_email,
+            'COMENTARIOS' => null
+        )
+    );
+
+    $json_encoded = json_encode($json_generate);
+
+    echo $json_encoded;
+
+    wp_die();
+}
