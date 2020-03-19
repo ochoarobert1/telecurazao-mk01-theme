@@ -41,17 +41,19 @@ remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_re
 /* --------------------------------------------------------------
 ADD PRICE IN FLORINS
 -------------------------------------------------------------- */
-
+/*
 add_action('woocommerce_custom_price', 'woocommerce_custom_price_converter');
 
 function woocommerce_custom_price_converter() {
     global $product;
-    $tax_rate = 1.8;
+    $tax_rate = 1.78;
     $price_dollars = $product->get_price();
-    $price_florins = $price_dollars * $tax_rate;
-    echo ' | ƒ ' . number_format((float)$price_florins, 2, '.', '');
+    if ($price_dollars != '') {
+        $price_florins = $price_dollars / $tax_rate;
+        echo ' | $ ' . number_format((float)$price_florins, 2, '.', '');
+    }
 }
-
+*/
 /* --------------------------------------------------------------
 ADD CUSTOM FIELD TO PRODUCT SINGLE - DYNAMIC CONTENT
 -------------------------------------------------------------- */
@@ -96,7 +98,7 @@ function custom_woocommerce_fee_fields() {
     <?php $i = 0; foreach ($product_fees as $product_fees_item) { ?>
     <div class="input-group-checkbox">
         <input id="fee_item_<?php echo $i; ?>" type="checkbox" name="fee_item_<?php echo $i; ?>" class="form-control" value="1"><label for="fee_item_<?php echo $i; ?>">
-        <?php echo $product_fees_item['telecurazao_fee_label'] . ' - $ ' . $product_fees_item['telecurazao_fee_price'] ?></label>
+        <?php echo $product_fees_item['telecurazao_fee_label'] . ' - Afl. ' . $product_fees_item['telecurazao_fee_price'] ?></label>
     </div>
     <?php $i++; } ?>
 </div>
@@ -163,7 +165,7 @@ function wc_add_info_to_cart( $cart_data, $cart_item )
                 $custom_items[] = array(
                     'name' => '+ ' . $cart_item["fee_item_" . $fee_id]["telecurazao_fee_label"],
                     'value' => floatval($cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]),
-                    'display' => '$ ' . $cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]
+                    'display' => 'Afl. ' . $cart_item["fee_item_" . $fee_id]["telecurazao_fee_price"]
                 );
             }
         }
@@ -225,6 +227,38 @@ function custom_cart_items_prices( $cart ) {
         $cart_item['data']->set_price( $new_price );
     }
 }
+
+function wc_discount_total_30() {
+    global $woocommerce;
+    $discount_total = 0;
+    foreach ( $woocommerce->cart->get_cart() as $cart_item_key => $values) {
+        $_product = $values['data'];
+        if ( $_product->is_on_sale() ) {
+            $regular_price = $_product->get_regular_price();
+            $sale_price = $_product->get_sale_price();
+            $subtotal = ($regular_price - $sale_price) * $values['quantity'];
+            $discount_total += $subtotal;
+        } else {
+            $regular_price = $_product->get_regular_price();
+            $subtotal = $regular_price * $values['quantity'];
+            $discount_total += $subtotal;
+        }
+    }
+
+    if ( $discount_total > 0 ) {
+        $tax_rate = 1.78;    
+        $total_cart = $discount_total / $tax_rate;
+        echo '<tr class="cart-discount">
+        <th>'. __( 'Price In $', 'tsavedis' ) .'</th>
+        <td data-title=" '. __( 'Saved', 'tsavedis' ) .' ">'
+            . ' $ ' . number_format((float)$total_cart, 2, '.', '') .'</td>
+        </tr>';
+    }
+}
+
+// Hook our values to the Basket and Checkout pages
+add_action( 'woocommerce_cart_totals_before_order_total', 'wc_discount_total_30', 99);
+add_action( 'woocommerce_review_order_before_order_total', 'wc_discount_total_30', 99);
 
 /* --------------------------------------------------------------
 ADD CLASSES FOR WOOCOMMERCE CHECKOUT FIELDS
